@@ -20,37 +20,73 @@ function NewPost(){
         const title = event.target['post-title'].value;
         const content = event.target['post-content'].value;
 
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify({ 
-                    "category": category[selectedCategory],
-                    "title": title,
-                    "content": content,
-                })
-            });
-
-            if (response.ok) {
-                // 서버 응답이 성공인 경우
-                // 게시글 작성 후 로컬 스토리지에 데이터 저장
-                localStorage.setItem('previousPageInfo', JSON.stringify({
-                    page: 'community',
-                    category: selectedCategory,
-                }));
-                navigate('/main');
-            } 
-            else{
-                return await response.json().then(errorResponse => {
-                    console.log(errorResponse);
-                    throw new EvalError(errorResponse.errorMessage);
+        if(selectedCategory == "배달팟"){
+            const orderTime = event.target['orderTime'].value;
+            const maxPeople = Number(event.target['maxPeople'].value);
+            const accountNumber = event.target['accountNumber'].value;
+            try {
+                const response = await fetch(serverUrl + "/delivery", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify({ 
+                        "title": title,
+                        "orderTime": orderTime,
+                        "maxPeople": maxPeople,
+                        "accountNumber": accountNumber,
+                        "content": content,
+                    })
                 });
+    
+                if (response.ok) {
+                    console.log("배달팟 등록 성공");
+                    navigate('/main');
+                } 
+                else{
+                    return await response.json().then(errorResponse => {
+                        console.log(errorResponse);
+                        throw new EvalError(errorResponse.errorMessage);
+                    });
+                }
+            } catch (error) {
+                alert(error);
             }
-        } catch (error) {
-            alert(error);
+        }
+        else {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify({ 
+                        "category": category[selectedCategory],
+                        "title": title,
+                        "content": content,
+                    })
+                });
+    
+                if (response.ok) {
+                    // 서버 응답이 성공인 경우
+                    // 게시글 작성 후 로컬 스토리지에 데이터 저장
+                    localStorage.setItem('previousPageInfo', JSON.stringify({
+                        page: 'community',
+                        category: selectedCategory,
+                    }));
+                    navigate('/main');
+                } 
+                else{
+                    return await response.json().then(errorResponse => {
+                        console.log(errorResponse);
+                        throw new EvalError(errorResponse.errorMessage);
+                    });
+                }
+            } catch (error) {
+                alert(error);
+            }
         }
     };
 
@@ -74,15 +110,15 @@ function NewPost(){
                     <>
                         <div className='deliveryInfo'>
                             <span>최대 모집 인원</span>
-                            <input type="number"></input>
+                            <input type="number" id='maxPeople'></input>
                         </div>
                         <div className='deliveryInfo'>
                             <span>주문 예정 시각</span>
-                            <input type="time"></input>
+                            <input type="datetime-local" id='orderTime'></input>
                         </div>
                         <div className='deliveryInfo'>
                             <span>송금 받을 계좌</span>
-                            <input type="text"></input>
+                            <input type="text" id='accountNumber'></input>
                         </div>
                     </>
                         

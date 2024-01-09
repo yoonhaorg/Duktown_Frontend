@@ -9,11 +9,14 @@ import unit from '../assets/unit.png';
 import community_blue from '../assets/edit_blue.png';
 import home_blue from '../assets/home_blue.png';
 import unit_blue from '../assets/unit_blue.png';
+import chat from '../assets/chat.png';
+import chat_blue from '../assets/chat_blue.png';
 import '../css/Bottombar.css';
 import '../css/Upperbar.css';
 import Home from './Home';
 import Unit from './Unit';
 import Community from './Community';
+import ChatroomList from './ChatroomList';
 
 function MainTemplate(){
     const navigate = useNavigate();
@@ -52,6 +55,9 @@ function MainTemplate(){
                 <div className="page" style={{ display: activePage === 'home' ? 'block' : 'none' }}>
                     <Home />
                 </div>
+                <div className='page' style={{ display: activePage === 'chat' ? 'block' : 'none' }}>
+                    <ChatroomList />
+                </div>
                 <div className="page" style={{ display: activePage === 'unit' ? 'block' : 'none' }}>
                     <Unit />
                 </div>
@@ -67,6 +73,11 @@ function MainTemplate(){
                     alt="home" 
                     className="bottom_bar_icon" 
                     onClick={() => handlePageChange('home')}
+                />
+                <img src={activePage === 'chat' ? chat_blue : chat} 
+                    alt="chat" 
+                    className="bottom_bar_icon" 
+                    onClick={() => handlePageChange('chat')}
                 />
                 <img src={activePage === 'unit' ? unit_blue : unit} 
                     alt="unit" 

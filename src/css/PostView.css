@@ -5,10 +5,34 @@
 hr {
     height: 1px;
     background: #E6E6E6;
+    width: 100%;
 }
 
 .functionBtn {
     margin-left: auto;
+    padding-right: 0px 0px 0px 5px;
+}
+
+.delivery-blue-text {
+    color: #6A9CFD;
+    font-weight: 600;
+}
+
+.delivery-gray-text {
+    color: #8E8E8E;
+}
+
+.post-recruitment {
+    padding: 3px 5px;
+}
+
+.recruitment-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#postview-content {
+    font-size: 12px;
 }
 
 #profileImage {

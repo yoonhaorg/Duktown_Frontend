@@ -48,7 +48,7 @@ function Comment({ commentId, userId, content, liked, likeCount, dateTime, delet
         <>
             <div id='upperInfo'>
                 <img id='comment-profileImage' src={profile_image} />
-                <span id='comment-user'>익명</span>
+                <span id='comment-user'>익명{userId}</span>
                 <span id='comment-time'>{dateTime}</span>    
                 <button className='functionBtn'>
                     <img src={function_button}/>

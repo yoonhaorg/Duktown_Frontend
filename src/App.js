@@ -23,6 +23,7 @@ import NoticeList from "./routes/NoticeList";
 import NoticeListDetail from "./routes/NoticeListDetail";
 import { AccessTokenProvider } from './AccessTokenContext';
 import PostView from './routes/PostView';
+import DeliveryPostView from './routes/DeliveryPostView';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
             <Route path="/notice/list" element={<NoticeList />}/>
             <Route path="/notice/list/detail/:id" element={<NoticeListDetail />}/>
             <Route path="/post/:postId" element={<PostView />}/>
+            <Route path="/delivery/:deliveryId" element={<DeliveryPostView />}/>
           </Routes>
       </AccessTokenProvider>
   </Router>

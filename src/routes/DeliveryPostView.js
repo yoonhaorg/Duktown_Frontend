@@ -10,30 +10,27 @@ import profile_image from '../assets/profile_image.png';
 import post_button from '../assets/post_button.png';
 import Comment from '../components/Comment';
 
-function PostView() {
+function DeliveryPostView() {
     const location = useLocation();
-    const id = location.state.id; // URL의 state 속성을 가져옴
-    const category_name = {0: '일상', 1: '장터'}
+    const deliveryId = location.state.deliveryId; // URL의 state 속성을 가져옴
     const [comments, setComments] = useState([]);
     const [post, setPost] = useState({
         userId: '',
-        category: '',
         title: '',
-        content: '',
-        liked: false,
-        likeCount: 0,
+        createdAt: '',
+        maxPeople: 0,
         commentCount: 0,
-        datetime: ''
+        active: true,
+        isWriter: true
     });
 
     const { accessToken } = useContext(AccessTokenContext);
 
     const serverUrl = "http://localhost:8080";
     const [replyToCommentId, setReplyToCommentId] = useState(null);
-    var userId, category, title, content, liked, likeCount, commentCount, datetime;
 
     const fetchPost = async () => {
-        fetch(serverUrl + '/posts' + `/${id}`, {
+        fetch(serverUrl + '/delivery' + `/${deliveryId}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -46,13 +43,15 @@ function PostView() {
         .then(data => {
             setPost({
                 userId: data.userId,
-                category: data.category,
                 title: data.title,
+                createdAt: data.createdAt,
+                maxPeople: data.maxPeople,
+                orderTime: data.orderTime,
                 content: data.content,
-                liked: data.liked,
-                likeCount: data.likeCount,
+                peopleCount: data.peopleCount,
                 commentCount: data.commentCount,
-                datetime: data.datetime
+                active: data.active,
+                isWriter: data.isWriter
             });
         })
         .catch(error => console.error('Error:', error));
@@ -60,7 +59,7 @@ function PostView() {
 
     const fetchComments = async () => {
         
-        fetch(serverUrl + "/comments" +`?postId=${id}`, {
+        fetch(serverUrl + "/comments" +`?deliveryId=${deliveryId}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -88,7 +87,7 @@ function PostView() {
                     'Authorization': `Bearer ${accessToken}`,
                 },
                 body: JSON.stringify({ 
-                    "postId": id,
+                    "deliveryId": deliveryId,
                     "content": content,
                     "parentCommentId": replyToCommentId // 대댓글이면 어떤 댓글에 대한 대댓글인지 식별
                 })
@@ -108,45 +107,17 @@ function PostView() {
             alert(error);
         }
     };
-
-    const handleLike = async () => {
-        try {
-            const response = await fetch(serverUrl + "/likes", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify({ 
-                    "postId": id,
-                    "commentId": null,
-                })
-            });
-
-            if (response.ok) {
-                fetchPost();
-            } 
-            else{
-                return response.json().then(errorResponse => {
-                    throw new EvalError(errorResponse.errorMessage);
-                });
-            }
-        } catch (error) {
-            alert(error);
-        }
-    };
     
     useEffect(() => {
         fetchPost();
         fetchComments();
-        console.log(post.userId);
     }, []);
 
     return (
         <>
             <div className='title_container'>
                 <img className='announcement_icon' src={arrow_left} onClick={()=>{window.history.back();}}></img>
-                {category_name[post.category]}
+                배달팟
             </div>
             <div className='content_container'>
                 <div id='upperInfo'>
@@ -161,9 +132,19 @@ function PostView() {
                 </div>
                 
                 <p className="post-title">{post.title}</p>
-                <p className="post-content">{post.content}</p>
+                <table className='recruitment-info'>
+                    <tr>
+                        <td><span className='delivery-gray-text'>최대 모집 인원</span></td>
+                        <td><span className='delivery-blue-text'>{post.maxPeople}명</span></td>
+                    </tr>
+                    <tr>
+                        <td><span className='delivery-gray-text'>주문 예정 시각</span></td>
+                        <td><span className='delivery-blue-text'>{post.orderTime}</span></td>
+                    </tr>
+                </table>
+                <p id="postview-content">{post.content}</p>
                 <div className="post-details">
-                    <img src={like_icon} onClick={handleLike}/><span className="post-likes">{post.likeCount}</span>
+                    <span className="post-recruitment">{post.peopleCount}/{post.maxPeople}</span>
                     <img src={comment_icon}/><span className="post-comments">{post.commentCount}</span>
                 </div>
                 <hr/>
@@ -206,4 +187,4 @@ function PostView() {
     );
 }
 
-export default PostView;
+export default DeliveryPostView;

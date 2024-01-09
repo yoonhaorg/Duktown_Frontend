@@ -20,20 +20,39 @@ function Community() {
 
     // 카테고리 변경 시, 해당 카테고리의 글들을 가져오는 함수
     const fetchPostsByCategory = async () => {
-        fetch(apiUrl+`?category=${categoryNumber[selectedCategory]}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': 'http://localhost:3000',
-                'Authorization': `Bearer ${accessToken}`,
-            },
-            method: 'GET',
-        })
-        .then(response => response.json())  // JSON을 파싱하기 위해 response.json()을 사용
-        .then(data => {
-            setPosts(data.content);
-        })
-        .catch(error => console.error('Error:', error));
+        if(selectedCategory == '배달팟'){
+            fetch(serverUrl + '/delivery', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Access-Control-Allow-Origin': 'http://localhost:3000',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                method: 'GET',
+            })
+            .then(response => response.json())  // JSON을 파싱하기 위해 response.json()을 사용
+            .then(data => {
+                setPosts(data.content);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        else {
+            fetch(apiUrl+`?category=${categoryNumber[selectedCategory]}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Access-Control-Allow-Origin': 'http://localhost:3000',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                method: 'GET',
+            })
+            .then(response => response.json())  // JSON을 파싱하기 위해 response.json()을 사용
+            .then(data => {
+                setPosts(data.content);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
     };
 
     // 선택된 카테고리 변경 시, 글들을 다시 불러옴
@@ -85,12 +104,16 @@ function Community() {
                 // 카테고리에 따라 다른 컴포넌트 렌더링
                 return selectedCategory === '배달팟' ? (
                     <DeliveryPost
-                        key={post.id}
+                        userId={post.userId}
+                        deliveryId={post.deliveryId}
                         title={post.title}
-                        content={post.category}
-                        order={post.order}
-                        recruitment={post.recruitment}
-                        time={post.time}
+                        createdAt={post.createdAt}
+                        maxPeople={post.maxPeople}
+                        orderTime={post.orderTime}
+                        content={post.content}
+                        peopleCount={post.peopleCount}
+                        commentCount={post.commentCount}
+                        active={post.active}
                     />
                 ) : (
                     <GeneralPost
